@@ -1,4 +1,4 @@
-resource "oci_core_instance" "oci_instance" {
+resource "oci_core_instance" "oci_instances" {
 
   count = length(var.instance_configuration)
 

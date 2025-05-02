@@ -8,6 +8,7 @@ variable "instance_configuration" {
       assign_ipv6ip             = string,
       assign_private_dns_record = string,
       assign_public_ip          = string,
+      state = string, # [RUNNING, STOPPED]
       shape_config = object({
         type   = string,
         memory = number,

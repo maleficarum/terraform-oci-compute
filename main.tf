@@ -1,7 +1,6 @@
 resource "oci_core_instance" "oci_instances" {
 
   count = length(var.instance_configuration)
-
   state = var.instance_configuration[count.index].state
 
   agent_config {

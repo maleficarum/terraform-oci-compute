@@ -1,7 +1,8 @@
 resource "oci_core_instance" "oci_instances" {
 
-  count = length(var.instance_configuration)
-  state = var.instance_configuration[count.index].state
+  count                = length(var.instance_configuration)
+  state                = var.instance_configuration[count.index].state
+  preserve_boot_volume = true
 
   agent_config {
     is_management_disabled = "false"
@@ -102,5 +103,9 @@ resource "oci_core_instance" "oci_instances" {
     source_type = "image"
   }
 
+  defined_tags = {
+        "Oracle-Tags.CreatedBy" = "default/terraform",
+        "Oracle-Tags.Environment" = var.environment 
+      }
 
 }

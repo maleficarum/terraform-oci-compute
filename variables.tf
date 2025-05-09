@@ -8,23 +8,29 @@ variable "instance_configuration" {
       assign_ipv6ip             = string,
       assign_private_dns_record = string,
       assign_public_ip          = string,
-      state = string, # [RUNNING, STOPPED]
+      state                     = string, # [RUNNING, STOPPED]
       shape_config = object({
         type   = string,
         memory = number,
         ocpus  = number
       }),
-      image = string
+      image       = string,
+      compartment = string
     })
   )
-}
-
-variable "compartment_id" {
-  type        = string
-  description = "The compartment OCID to deploy the instances"
 }
 
 variable "subnet" {
   type        = string
   description = "The ID of the target subnet"
+}
+
+variable "compartment_id" {
+  type        = string
+  description = "This compartment ID is for global queries. No resource will be deployed in this compartment"
+}
+
+variable "environment" {
+  type = string
+  description = "The deployed compartment"
 }

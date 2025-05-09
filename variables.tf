@@ -14,17 +14,23 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
-      image = string
+      image       = string,
+      compartment = string
     })
   )
-}
-
-variable "compartment_id" {
-  type        = string
-  description = "The compartment OCID to deploy the instances"
 }
 
 variable "subnet" {
   type        = string
   description = "The ID of the target subnet"
+}
+
+variable "compartment_id" {
+  type        = string
+  description = "This compartment ID is for global queries. No resource will be deployed in this compartment"
+}
+
+variable "environment" {
+  type = string
+  description = "The deployed compartment"
 }

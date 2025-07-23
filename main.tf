@@ -71,6 +71,8 @@ resource "oci_core_instance" "oci_instances" {
 
   availability_domain = data.oci_identity_availability_domains.oci_identity_availability_domains.availability_domains[0].name
   compartment_id      = var.compartment_id
+  #public_ip        =    length(var.reserved_ips) == length(var.instance_configuration) ? var.reserved_ips[count.index].public_ip : null
+  
 
   create_vnic_details {
     assign_ipv6ip             = var.instance_configuration[count.index].assign_ipv6ip
@@ -79,7 +81,8 @@ resource "oci_core_instance" "oci_instances" {
     subnet_id                 = var.subnet
   }
 
-  display_name = "${var.instance_configuration[count.index].name}-${count.index}-vm"
+
+  display_name = var.instance_configuration[count.index].name != "" ? var.instance_configuration[count.index].name : "${var.environment}-vm-${count.index}"
 
   instance_options {
     are_legacy_imds_endpoints_disabled = "false"
@@ -104,8 +107,19 @@ resource "oci_core_instance" "oci_instances" {
   }
 
   defined_tags = {
-        "Oracle-Tags.CreatedBy" = "default/terraform",
-        "Oracle-Tags.Environment" = var.environment 
-      }
+    "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
+    "Oracle-Tags.Environment" = var.environment
+  }
 
+}
+
+resource "oci_core_public_ip" "assigned_ips" {
+  count = length(var.instance_configuration)
+
+  compartment_id = var.compartment_id
+  lifetime       = "RESERVED"
+  display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
+  
+  # This attaches the IP directly to the instance's VNIC
+  private_ip_id = oci_core_instance.oci_instances[count.index].private_ip
 }

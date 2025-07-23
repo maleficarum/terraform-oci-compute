@@ -25,12 +25,20 @@ variable "subnet" {
   description = "The ID of the target subnet"
 }
 
+#variable "reserved_ips" {
+#  type = list(object({
+#    ip_address = string,
+#    public_ip_pool_id =string
+#  }))
+#  description = "Reserved IPS"
+#}
+
 variable "compartment_id" {
   type        = string
   description = "This compartment ID is for global queries. No resource will be deployed in this compartment"
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "The deployed compartment"
 }

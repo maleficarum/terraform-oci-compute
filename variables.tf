@@ -22,23 +22,32 @@ variable "instance_configuration" {
 
 variable "subnet" {
   type        = string
-  description = "The ID of the target subnet"
+  description = "The OCID of the target subnet"
 }
 
-#variable "reserved_ips" {
-#  type = list(object({
-#    ip_address = string,
-#    public_ip_pool_id =string
-#  }))
-#  description = "Reserved IPS"
-#}
+variable "reserved_ips" {
+  type = number
+  default = 0
+  description = "Reserved IPS"
+}
 
 variable "compartment_id" {
   type        = string
-  description = "This compartment ID is for global queries. No resource will be deployed in this compartment"
+  description = "This is the parent compartment (OCID). A compute compartment will be created inside this. No resource will be deployed in this compartment"
+}
+
+variable "network_compartment" {
+  type = string
+  description = "The network compartment (OCID) where the reserved public IPs will be created"
 }
 
 variable "environment" {
   type        = string
   description = "The deployed compartment"
+}
+
+variable "cloud_init_file" {
+  type = string
+  default = ""
+  description = "The init file that has the commands to execute on the VM creation"
 }

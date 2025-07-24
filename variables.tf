@@ -14,8 +14,7 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
-      image       = string,
-      compartment = string
+      image       = string
     })
   )
 }

@@ -6,9 +6,9 @@ on:
     workflow_dispatch:
     workflow_call:
     pull_request:
-      branches: [ main, development ]
+      branches: [ development ]
     push:
-      branches: [ main, development ]
+      branches: [ main ]
 
 jobs:
     plan:
@@ -40,6 +40,7 @@ jobs:
               shell: bash              
 
             - name: 'TFSec execution'
+              if: github.event.pull_request.base.ref == 'development'
               run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f markdown >> $GITHUB_STEP_SUMMARY
               shell: bash
 

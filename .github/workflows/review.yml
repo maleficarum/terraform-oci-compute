@@ -7,6 +7,8 @@ on:
     workflow_call:
     pull_request:
       branches: [ main, development ]
+    push:
+      branches: [ main, development ]
 
 jobs:
     plan:
@@ -29,7 +31,7 @@ jobs:
                 fetch-depth: 0            
 
             - name: Echo environment
-              run: echo "Using environment [${environment}]"
+              run: echo "Using environment [${environment}] and ${github.fef}"
               shell: bash
 
             - name: 'TFLint init'

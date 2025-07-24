@@ -31,7 +31,7 @@ jobs:
                 fetch-depth: 0            
 
             - name: Echo environment
-              run: echo "Using environment [${environment}] and ${github.ref}"
+              run: echo "Using environment [${environment}] and ${{github.ref}}"
               shell: bash
 
             - name: 'TFLint init'

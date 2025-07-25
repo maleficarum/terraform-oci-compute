@@ -14,6 +14,7 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
+      storage_size = number,
       image       = string
     })
   )
@@ -49,4 +50,10 @@ variable "cloud_init_file" {
   type = string
   default = ""
   description = "The init file that has the commands to execute on the VM creation"
+}
+
+variable "application_name" {
+  type = string
+  default = "General"
+  description = "The application name that will be deployed over this resource"
 }

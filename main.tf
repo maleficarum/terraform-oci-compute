@@ -116,6 +116,7 @@ resource "oci_core_instance" "oci_instances" {
   defined_tags = {
     "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
     "Oracle-Tags.Environment" = var.environment
+    "Oracle-Tags.Application" = var.application_name
   } 
 
 }

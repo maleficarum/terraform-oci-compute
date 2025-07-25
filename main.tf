@@ -97,7 +97,8 @@ resource "oci_core_instance" "oci_instances" {
   is_pv_encryption_in_transit_enabled = "true"
 
   metadata = {
-    "ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
+    #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
+    ssh_authorized_keys = join("\n", var.instance_configuration[count.index].ssh_public_key)
     user_data = fileexists(var.cloud_init_file) ? base64encode(file(var.cloud_init_file)) : null
   }
 

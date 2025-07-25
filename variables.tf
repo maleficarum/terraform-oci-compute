@@ -4,7 +4,7 @@ variable "instance_configuration" {
   type = list(
     object({
       name                      = string,
-      ssh_public_key            = string,
+      ssh_public_key            = list(string),
       assign_ipv6ip             = string,
       assign_private_dns_record = string,
       assign_public_ip          = string,

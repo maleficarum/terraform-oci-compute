@@ -78,7 +78,7 @@ resource "oci_core_instance" "oci_instances" {
   availability_domain = data.oci_identity_availability_domains.oci_identity_availability_domains.availability_domains[0].name
   compartment_id      = oci_identity_compartment.compute_compartment.id
   #public_ip        =    length(var.reserved_ips) == length(var.instance_configuration) ? var.reserved_ips[count.index].public_ip : null
-  
+
 
   create_vnic_details {
     assign_ipv6ip             = var.instance_configuration[count.index].assign_ipv6ip
@@ -99,7 +99,7 @@ resource "oci_core_instance" "oci_instances" {
   metadata = {
     #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
     ssh_authorized_keys = join("\n", var.instance_configuration[count.index].ssh_public_key)
-    user_data = fileexists(var.cloud_init_file) ? base64encode(file(var.cloud_init_file)) : null
+    user_data           = fileexists(var.cloud_init_file) ? base64encode(file(var.cloud_init_file)) : null
   }
 
   shape = var.instance_configuration[count.index].shape_config.type
@@ -118,7 +118,7 @@ resource "oci_core_instance" "oci_instances" {
     "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
     "Oracle-Tags.Environment" = var.environment
     "Oracle-Tags.Application" = var.application_name
-  } 
+  }
 
 }
 
@@ -128,7 +128,7 @@ resource "oci_core_public_ip" "assigned_ips" {
   compartment_id = var.network_compartment
   lifetime       = "RESERVED"
   display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
-  
+
   # This attaches the IP directly to the instance's VNIC
-  private_ip_id  = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
+  private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
 }

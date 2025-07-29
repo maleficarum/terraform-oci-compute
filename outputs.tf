@@ -14,6 +14,6 @@ output "instances_names" {
 }
 
 output "reserver_publica_ips" {
-  value = oci_core_public_ip.assigned_ips
+  value       = oci_core_public_ip.assigned_ips
   description = "The reserved publica IPs for the VM instances."
 }

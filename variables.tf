@@ -15,7 +15,7 @@ variable "instance_configuration" {
         ocpus  = number
       }),
       storage_size = number,
-      image       = string
+      image        = string
     })
   )
 }
@@ -26,8 +26,8 @@ variable "subnet" {
 }
 
 variable "reserved_ips" {
-  type = number
-  default = 0
+  type        = number
+  default     = 0
   description = "Reserved IPS"
 }
 
@@ -37,7 +37,7 @@ variable "compartment_id" {
 }
 
 variable "network_compartment" {
-  type = string
+  type        = string
   description = "The network compartment (OCID) where the reserved public IPs will be created"
 }
 
@@ -47,13 +47,13 @@ variable "environment" {
 }
 
 variable "cloud_init_file" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "The init file that has the commands to execute on the VM creation"
 }
 
 variable "application_name" {
-  type = string
-  default = "General"
+  type        = string
+  default     = "General"
   description = "The application name that will be deployed over this resource"
 }

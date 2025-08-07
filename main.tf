@@ -84,7 +84,7 @@ resource "oci_core_instance" "oci_instances" {
     assign_ipv6ip             = var.instance_configuration[count.index].assign_ipv6ip
     assign_private_dns_record = var.instance_configuration[count.index].assign_private_dns_record
     assign_public_ip          = length(var.instance_configuration) == var.reserved_ips ? false : var.instance_configuration[count.index].assign_public_ip
-    subnet_id                 = var.subnet
+    subnet_id                 = var.subnets[var.instance_configuration[count.index].subnet_index]
   }
 
 
@@ -99,7 +99,8 @@ resource "oci_core_instance" "oci_instances" {
   metadata = {
     #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
     ssh_authorized_keys = join("\n", var.instance_configuration[count.index].ssh_public_key)
-    user_data           = fileexists(var.cloud_init_file) ? base64encode(file(var.cloud_init_file)) : null
+    #user_data           = fileexists(var.instance_configuration[count.index].cloud_init_file) ? base64encode(file(var.instance_configuration[count.index].cloud_init_file)) : null
+    user_data = base64encode(file("${var.cloud_init_file}-${count.index + 1}"))
   }
 
   shape = var.instance_configuration[count.index].shape_config.type
@@ -117,10 +118,29 @@ resource "oci_core_instance" "oci_instances" {
   defined_tags = {
     "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
     "Oracle-Tags.Environment" = var.environment
-    "Oracle-Tags.Application" = var.application_name
+    "Oracle-Tags.Application" = var.instance_configuration[count.index].application_name == "" ? var.application_name : var.instance_configuration[count.index].application_name
   }
 
 }
+
+#resource "oci_core_public_ip" "assigned_ips" {
+#  count = length(var.instance_configuration) == var.reserved_ips ? length(var.instance_configuration) : 0
+
+#  compartment_id = var.network_compartment
+#  lifetime       = "RESERVED"
+#  display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
+
+  # This attaches the IP directly to the instance's VNIC
+#  private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
+
+#  lifecycle {
+#    prevent_destroy = false 
+#    ignore_changes = [
+#      private_ip_id,
+#      display_name
+#    ]
+#  }  
+#}
 
 resource "oci_core_public_ip" "assigned_ips" {
   count = length(var.instance_configuration) == var.reserved_ips ? length(var.instance_configuration) : 0
@@ -129,6 +149,14 @@ resource "oci_core_public_ip" "assigned_ips" {
   lifetime       = "RESERVED"
   display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
 
-  # This attaches the IP directly to the instance's VNIC
+  # This remains the same as it gets the private IP ID from the data source
   private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes = [
+      private_ip_id,
+      display_name
+    ]
+  }
 }

@@ -15,14 +15,16 @@ variable "instance_configuration" {
         ocpus  = number
       }),
       storage_size = number,
-      image        = string
+      image        = string,
+      subnet_index = number,
+      application_name = string
     })
   )
 }
 
-variable "subnet" {
-  type        = string
-  description = "The OCID of the target subnet"
+variable "subnets" {
+  type        = list(string)
+  description = "The list of OCID's of the target subnet"
 }
 
 variable "reserved_ips" {
@@ -49,7 +51,7 @@ variable "environment" {
 variable "cloud_init_file" {
   type        = string
   default     = ""
-  description = "The init file that has the commands to execute on the VM creation"
+  description = "The calculated path to cloud init file."
 }
 
 variable "application_name" {

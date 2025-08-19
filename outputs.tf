@@ -13,7 +13,7 @@ output "instances_names" {
   description = "The created instances"
 }
 
-output "reserver_publica_ips" {
+output "reserved_public_ips" {
   value       = oci_core_public_ip.assigned_ips
   description = "The reserved publica IPs for the VM instances."
 }

@@ -17,7 +17,8 @@ variable "instance_configuration" {
       storage_size = number,
       image        = string,
       subnet_index = number,
-      application_name = string
+      application_name = string,
+      reserved_public_ip = bool
     })
   )
 }
@@ -27,11 +28,11 @@ variable "subnets" {
   description = "The list of OCID's of the target subnet"
 }
 
-variable "reserved_ips" {
-  type        = number
-  default     = 0
-  description = "Reserved IPS"
-}
+# variable "reserved_ips" {
+#   type        = number
+#   default     = 0
+#   description = "Reserved IPS"
+# }
 
 variable "compartment_id" {
   type        = string

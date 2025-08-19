@@ -83,7 +83,7 @@ resource "oci_core_instance" "oci_instances" {
   create_vnic_details {
     assign_ipv6ip             = var.instance_configuration[count.index].assign_ipv6ip
     assign_private_dns_record = var.instance_configuration[count.index].assign_private_dns_record
-    assign_public_ip          = length(var.instance_configuration) == var.reserved_ips ? false : var.instance_configuration[count.index].assign_public_ip
+    assign_public_ip          = var.instance_configuration[count.index].reserved_public_ip ? false : var.instance_configuration[count.index].assign_public_ip
     subnet_id                 = var.subnets[var.instance_configuration[count.index].subnet_index]
   }
 
@@ -121,42 +121,37 @@ resource "oci_core_instance" "oci_instances" {
     "Oracle-Tags.Application" = var.instance_configuration[count.index].application_name == "" ? var.application_name : var.instance_configuration[count.index].application_name
   }
 
+  freeform_tags = {
+    "reserved_public_ip" = var.instance_configuration[count.index].reserved_public_ip == "" ? false : var.instance_configuration[count.index].reserved_public_ip
+  }
+
 }
 
-#resource "oci_core_public_ip" "assigned_ips" {
-#  count = length(var.instance_configuration) == var.reserved_ips ? length(var.instance_configuration) : 0
+# resource "oci_core_public_ip" "assigned_ips" {
+#   #count = length(var.instance_configuration) == var.reserved_ips ? length(var.instance_configuration) : 0
+#   count = length(var.instance_configuration)
 
-#  compartment_id = var.network_compartment
-#  lifetime       = "RESERVED"
-#  display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
+#   compartment_id = var.network_compartment
+#   lifetime       = "RESERVED"
+#   display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
 
-  # This attaches the IP directly to the instance's VNIC
-#  private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
+#   # This remains the same as it gets the private IP ID from the data source
+#   private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
 
-#  lifecycle {
-#    prevent_destroy = false 
-#    ignore_changes = [
-#      private_ip_id,
-#      display_name
-#    ]
-#  }  
-#}
+#   lifecycle {
+#     prevent_destroy = false
+#     ignore_changes = [
+#       private_ip_id,
+#       display_name
+#     ]
+#   }
+# }
 
 resource "oci_core_public_ip" "assigned_ips" {
-  count = length(var.instance_configuration) == var.reserved_ips ? length(var.instance_configuration) : 0
+  for_each = local.instances_needing_public_ip
 
   compartment_id = var.network_compartment
   lifetime       = "RESERVED"
-  display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[count.index].display_name}"
-
-  # This remains the same as it gets the private IP ID from the data source
-  private_ip_id = data.oci_core_private_ips.instance_private_ips[count.index].private_ips[0].id
-
-  lifecycle {
-    prevent_destroy = false
-    ignore_changes = [
-      private_ip_id,
-      display_name
-    ]
-  }
+  display_name   = "reserved-ip-for-${oci_core_instance.oci_instances[each.key].display_name}"
+  private_ip_id  = data.oci_core_private_ips.instance_private_ips[each.key].private_ips[0].id
 }

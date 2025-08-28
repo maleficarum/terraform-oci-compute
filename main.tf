@@ -1,4 +1,6 @@
 resource "oci_identity_compartment" "compute_compartment" {
+  count = var.compartment_id != "" ? 1 : 0
+
   compartment_id = var.compartment_id
   description    = "Compartment for compute resources"
   name           = "compute"
@@ -76,7 +78,7 @@ resource "oci_core_instance" "oci_instances" {
   }
 
   availability_domain = data.oci_identity_availability_domains.oci_identity_availability_domains.availability_domains[0].name
-  compartment_id      = oci_identity_compartment.compute_compartment.id
+  compartment_id      = local.compartment_id
   #public_ip        =    length(var.reserved_ips) == length(var.instance_configuration) ? var.reserved_ips[count.index].public_ip : null
 
 

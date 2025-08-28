@@ -2,7 +2,7 @@ resource "oci_core_volume" "volumes" {
   count               = length(var.instance_configuration)
   availability_domain = data.oci_identity_availability_domains.oci_identity_availability_domains.availability_domains[0].name
 
-  compartment_id = oci_identity_compartment.compute_compartment.id
+  compartment_id = local.compartment_id
   display_name   = var.instance_configuration[count.index].name != "" ? "${var.instance_configuration[count.index].name}-volume" : "${var.environment}-vm-volume-${count.index}"
   size_in_gbs    = var.instance_configuration[count.index].storage_size
 

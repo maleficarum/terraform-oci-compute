@@ -36,7 +36,14 @@ variable "subnets" {
 
 variable "compartment_id" {
   type        = string
-  description = "This is the parent compartment (OCID). A compute compartment will be created inside this. No resource will be deployed in this compartment"
+  default = ""
+  description = "Parent compartment (OCID) where all the sub-compartments will be created (networking, compute)"
+}
+
+variable "existing_compartment" {
+  type        = string
+  default = ""
+  description = "The existing compartment where the network resources should be created. If this si set, the compartment_id variable should be empty"  
 }
 
 variable "network_compartment" {

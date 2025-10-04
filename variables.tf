@@ -14,11 +14,18 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
-      storage_size = number,
-      image        = string,
-      subnet_index = number,
-      application_name = string,
-      reserved_public_ip = bool
+      prevent_destroy = bool,
+      #storage_size       = number,
+      image              = string,
+      subnet_index       = number,
+      application_name   = string,
+      reserved_public_ip = bool,
+      platform           = string
+      license_type       = string,
+      block_volumes = list(object({
+        storage_size = number,
+        vpus_per_gb  = number # 0: low cost , 10 : Balanced, 20 : High performance , 30-120 : Ultra High performance
+      }))
     })
   )
 }
@@ -36,14 +43,14 @@ variable "subnets" {
 
 variable "compartment_id" {
   type        = string
-  default = ""
+  default     = ""
   description = "Parent compartment (OCID) where all the sub-compartments will be created (networking, compute)"
 }
 
 variable "existing_compartment" {
   type        = string
-  default = ""
-  description = "The existing compartment where the network resources should be created. If this si set, the compartment_id variable should be empty"  
+  default     = ""
+  description = "The existing compartment where the network resources should be created. If this si set, the compartment_id variable should be empty"
 }
 
 variable "network_compartment" {
@@ -66,4 +73,16 @@ variable "application_name" {
   type        = string
   default     = "General"
   description = "The application name that will be deployed over this resource"
+}
+
+variable "vault_token" {
+  type        = string
+  description = "The token to access the vault"
+  default     = ""
+}
+
+variable "vault_host" {
+  type        = string
+  description = "The vault host with port"
+  default     = ""
 }

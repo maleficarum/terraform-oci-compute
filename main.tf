@@ -152,8 +152,9 @@ resource "oci_core_instance" "oci_instances" {
       type                                 = "AMD_VM"
     }
   }
-
-
+  lifecycle {
+    prevent_destroy = true # Will error instead of replacing
+  }
 }
 
 # resource "oci_core_public_ip" "assigned_ips" {

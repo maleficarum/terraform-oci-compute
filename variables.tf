@@ -14,13 +14,18 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
-      storage_size       = number,
+      prevent_destroy = bool,
+      #storage_size       = number,
       image              = string,
       subnet_index       = number,
       application_name   = string,
       reserved_public_ip = bool,
       platform           = string
-      license_type       = string
+      license_type       = string,
+      block_volumes = list(object({
+        storage_size = number,
+        vpus_per_gb  = number # 0: low cost , 10 : Balanced, 20 : High performance , 30-120 : Ultra High performance
+      }))
     })
   )
 }

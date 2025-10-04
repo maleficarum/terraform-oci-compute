@@ -10,3 +10,7 @@ data "oci_core_private_ips" "instance_private_ips" {
   subnet_id  = var.subnets[each.value.subnet_index]
   ip_address = oci_core_instance.oci_instances[each.key].private_ip
 }
+
+data "vault_generic_secret" "windows_password" {
+  path = "alpura/${var.application_name}/${var.environment}/windows"
+}

@@ -24,11 +24,11 @@ resource "oci_core_instance" "oci_instances" {
       name          = "Oracle Java Management Service"
     }
     plugins_config {
-      desired_state = "DISABLED"
+      desired_state = "ENABLED"
       name          = "OS Management Service Agent"
     }
     plugins_config {
-      desired_state = "DISABLED"
+      desired_state = "ENABLED"
       name          = "OS Management Hub Agent"
     }
     plugins_config {
@@ -98,11 +98,17 @@ resource "oci_core_instance" "oci_instances" {
 
   is_pv_encryption_in_transit_enabled = "true"
 
+  # metadata = {
+  #   #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
+  #   ssh_authorized_keys = join("\n", var.instance_configuration[count.index].ssh_public_key)
+  #   #user_data           = fileexists(var.instance_configuration[count.index].cloud_init_file) ? base64encode(file(var.instance_configuration[count.index].cloud_init_file)) : null
+  #   user_data = base64encode(file("${var.cloud_init_file}-${count.index + 1}"))
+  # }
+
   metadata = {
-    #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
-    ssh_authorized_keys = join("\n", var.instance_configuration[count.index].ssh_public_key)
-    #user_data           = fileexists(var.instance_configuration[count.index].cloud_init_file) ? base64encode(file(var.instance_configuration[count.index].cloud_init_file)) : null
-    user_data = base64encode(file("${var.cloud_init_file}-${count.index + 1}"))
+    ssh_authorized_keys = var.instance_configuration[count.index].platform != "WINDOWS" ? join("\n", var.instance_configuration[count.index].ssh_public_key) : null
+    user_data           = var.instance_configuration[count.index].platform != "WINDOWS" ? base64encode(file("${var.cloud_init_file}-${count.index + 1}")) : null
+    admin_password      = var.instance_configuration[count.index].platform == "WINDOWS" ? data.vault_generic_secret.windows_password.data["password"] : null
   }
 
   shape = var.instance_configuration[count.index].shape_config.type
@@ -127,6 +133,28 @@ resource "oci_core_instance" "oci_instances" {
     "reserved_public_ip" = var.instance_configuration[count.index].reserved_public_ip == "" ? false : var.instance_configuration[count.index].reserved_public_ip
   }
 
+  #Licenciamiento para windows
+  dynamic "licensing_configs" {
+    for_each = var.instance_configuration[count.index].platform == "WINDOWS" ? [1] : []
+
+    content {
+      license_type = var.instance_configuration[count.index].license_type
+      type         = var.instance_configuration[count.index].platform
+    }
+  }
+
+  # Conditionally add platform_config only for Windows
+  dynamic "platform_config" {
+    for_each = var.instance_configuration[count.index].platform == "WINDOWS" ? [1] : []
+
+    content {
+      is_symmetric_multi_threading_enabled = "true"
+      type                                 = "AMD_VM"
+    }
+  }
+  lifecycle {
+    prevent_destroy = true # Will error instead of replacing
+  }
 }
 
 # resource "oci_core_public_ip" "assigned_ips" {

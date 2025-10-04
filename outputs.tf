@@ -13,6 +13,11 @@ output "instances_names" {
   description = "The created instances"
 }
 
+output "compartment_id" {
+  value = local.compartment_id
+  description = "The Compute compartment"
+}
+
 output "reserved_public_ips" {
   value       = oci_core_public_ip.assigned_ips
   description = "The reserved publica IPs for the VM instances."

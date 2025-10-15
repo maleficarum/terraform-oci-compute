@@ -73,6 +73,18 @@ resource "oci_core_instance" "oci_instances" {
     }
   }
 
+  dynamic "launch_options" {
+    for_each = var.instance_configuration[count.index].firmware == "BIOS" ? [1] : []
+    
+    content {
+      firmware = "BIOS"
+      network_type = "PARAVIRTUALIZED"
+      boot_volume_type = "PARAVIRTUALIZED"
+      remote_data_volume_type = "PARAVIRTUALIZED"
+    }
+  }
+
+
   availability_config {
     recovery_action = "RESTORE_INSTANCE"
   }
@@ -96,7 +108,7 @@ resource "oci_core_instance" "oci_instances" {
     are_legacy_imds_endpoints_disabled = "false"
   }
 
-  is_pv_encryption_in_transit_enabled = "true"
+  is_pv_encryption_in_transit_enabled = var.instance_configuration[count.index].firmware == "BIOS" ? "false" : "true"
 
   # metadata = {
   #   #"ssh_authorized_keys" = var.instance_configuration[count.index].ssh_public_key
@@ -121,6 +133,7 @@ resource "oci_core_instance" "oci_instances" {
   source_details {
     source_id   = var.instance_configuration[count.index].image
     source_type = "image"
+    boot_volume_size_in_gbs = 50  # Minimum allowed size
   }
 
   defined_tags = {
@@ -153,7 +166,7 @@ resource "oci_core_instance" "oci_instances" {
     }
   }
   lifecycle {
-    prevent_destroy = true # Will error instead of replacing
+    prevent_destroy = false # Will error instead of replacing
   }
 }
 

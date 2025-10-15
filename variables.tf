@@ -15,6 +15,7 @@ variable "instance_configuration" {
         ocpus  = number
       }),
       prevent_destroy = bool,
+      firmware = optional(string, "UEFI_64"),  # "optional(string, "BIOS")" or "BIOS" - match your source
       #storage_size       = number,
       image              = string,
       subnet_index       = number,

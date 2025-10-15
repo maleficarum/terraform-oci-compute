@@ -22,3 +22,9 @@ output "reserved_public_ips" {
   value       = oci_core_public_ip.assigned_ips
   description = "The reserved publica IPs for the VM instances."
 }
+
+output "instances_details" {
+  value =  oci_core_instance.oci_instances
+  description = "The already created instances"
+  sensitive = true
+}

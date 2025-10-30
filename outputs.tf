@@ -14,7 +14,7 @@ output "instances_names" {
 }
 
 output "compartment_id" {
-  value = local.compartment_id
+  value       = local.compartment_id
   description = "The Compute compartment"
 }
 
@@ -24,7 +24,7 @@ output "reserved_public_ips" {
 }
 
 output "instances_details" {
-  value =  oci_core_instance.oci_instances
+  value       = oci_core_instance.oci_instances
   description = "The already created instances"
-  sensitive = true
+  sensitive   = true
 }

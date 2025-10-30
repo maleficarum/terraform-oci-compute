@@ -14,8 +14,10 @@ variable "instance_configuration" {
         memory = number,
         ocpus  = number
       }),
-      prevent_destroy = bool,
-      firmware = optional(string, "UEFI_64"),  # "optional(string, "BIOS")" or "BIOS" - match your source
+      prevent_destroy  = bool,
+      firmware         = optional(string, "UEFI_64"), # "optional(string, "BIOS")" or "BIOS" - match your source
+      defined_tags     = optional(map(string), {})
+      boot_volume_size = optional(number, 50),
       #storage_size       = number,
       image              = string,
       subnet_index       = number,
@@ -57,6 +59,7 @@ variable "existing_compartment" {
 variable "network_compartment" {
   type        = string
   description = "The network compartment (OCID) where the reserved public IPs will be created"
+  default     = "network_compartment_ocid"
 }
 
 variable "environment" {
@@ -86,4 +89,15 @@ variable "vault_host" {
   type        = string
   description = "The vault host with port"
   default     = ""
+}
+
+variable "client" {
+  type        = string
+  description = "The customer name [ alpura, alianza ...]"
+  default     = "generic"
+}
+
+variable "tenant_id" {
+  type        = string
+  description = "The tenant id"
 }

@@ -7,7 +7,6 @@ resource "oci_identity_compartment" "compute_compartment" {
 }
 
 resource "oci_core_instance" "oci_instances" {
-
   count                = length(var.instance_configuration)
   state                = var.instance_configuration[count.index].state
   preserve_boot_volume = true
@@ -75,11 +74,11 @@ resource "oci_core_instance" "oci_instances" {
 
   dynamic "launch_options" {
     for_each = var.instance_configuration[count.index].firmware == "BIOS" ? [1] : []
-    
+
     content {
-      firmware = "BIOS"
-      network_type = "PARAVIRTUALIZED"
-      boot_volume_type = "PARAVIRTUALIZED"
+      firmware                = "BIOS"
+      network_type            = "PARAVIRTUALIZED"
+      boot_volume_type        = "PARAVIRTUALIZED"
       remote_data_volume_type = "PARAVIRTUALIZED"
     }
   }
@@ -131,16 +130,18 @@ resource "oci_core_instance" "oci_instances" {
   }
 
   source_details {
-    source_id   = var.instance_configuration[count.index].image
-    source_type = "image"
-    boot_volume_size_in_gbs = 50  # Minimum allowed size
+    source_id               = var.instance_configuration[count.index].image
+    source_type             = "image"
+    boot_volume_size_in_gbs = var.instance_configuration[count.index].boot_volume_size > 50 ? var.instance_configuration[count.index].boot_volume_size : 50 # Minimum allowed size
   }
 
-  defined_tags = {
-    "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
-    "Oracle-Tags.Environment" = var.environment
-    "Oracle-Tags.Application" = var.instance_configuration[count.index].application_name == "" ? var.application_name : var.instance_configuration[count.index].application_name
-  }
+  # defined_tags = {
+  #   "Oracle-Tags.CreatedBy"   = "default/terraform-cae",
+  #   "Oracle-Tags.Environment" = var.environment
+  #   "Oracle-Tags.Application" = var.instance_configuration[count.index].application_name == "" ? var.application_name : var.instance_configuration[count.index].application_name
+  # }
+
+  defined_tags = var.instance_configuration[count.index].defined_tags
 
   freeform_tags = {
     "reserved_public_ip" = var.instance_configuration[count.index].reserved_public_ip == "" ? false : var.instance_configuration[count.index].reserved_public_ip

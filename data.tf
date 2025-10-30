@@ -1,6 +1,7 @@
 # tflint-ignore: terraform_unused_declarations
 data "oci_identity_availability_domains" "oci_identity_availability_domains" {
-  compartment_id = local.compartment_id
+  #compartment_id = local.compartment_id
+  compartment_id = var.tenant_id
 }
 
 # First, get all instances with the specific tag
@@ -12,5 +13,5 @@ data "oci_core_private_ips" "instance_private_ips" {
 }
 
 data "vault_generic_secret" "windows_password" {
-  path = "alpura/${var.application_name}/${var.environment}/windows"
+  path = "${var.client}/${var.application_name}/${var.environment}/windows"
 }
